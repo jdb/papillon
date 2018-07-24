@@ -5,39 +5,22 @@ def order(interval1, interval2):
 
 def is_overlapping(interval1, interval2):
     """Returns True when the 2 intervals overlap, False otherwise."""
-    #  if interval2[0]<interval1[0]:
+
     if order(interval2, interval1):
         interval1, interval2 = interval2, interval1
     return interval1[1] >= interval2[0]
+
     # return not (interval1[1] < interval2[0] or interval2[1] < interval1[0])
 
 
 def merge_intervals(interval1, interval2):
     """Returns one interval from 2 intervals."""
-    #  if is_overlapping(interval1, interval2):
-    return min(interval1[0], interval2[0]), max(interval1[1], interval2[1])
+    if is_overlapping(interval1, interval2):
+        return min(interval1[0], interval2[0]), max(interval1[1], interval2[1])
 
 
 def merge_streams(stream1, stream2):
     """Yields intervals from each of the input sorted stream, in order."""
-
-    """DELINING STREAMS - NOT WORKING"""
-
-    """a = len(stream1)+len(stream2)
-    
-    for i in range(0, a-1):
-      if order(stream2[0], stream1[0]):
-        stream1,stream2 = stream2,stream1
-      yield stream1[0]
-      stream1.pop(0)
-      if len(stream1)==0:
-        break
-  
-    a = len(stream2)
-    
-    if a!=0:
-      for i in range(0, a-1):
-        yield stream2[i]  """
 
     a, b = 0, 0
 
@@ -74,17 +57,6 @@ def merge_streams(stream1, stream2):
 
 def merge_overlapping_intervals(stream):
     """Yields intervals, merging overlapping intervals from the input stream (already sorted)."""
-
-    """DELITING STREAM - NOT WORKING"""
-
-    """  stream=stream_start
-    
-    for i in range(2, len(stream_start)):
-      if is_overlapping(stream[0], stream[1]):
-        stream[1]=merge_intervals(stream[0], stream[1])
-        stream.pop(0)
-      else:
-        yield stream[0]"""
 
     s = stream[0]
 
