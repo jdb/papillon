@@ -27,26 +27,65 @@ def merge_overlapping_intervals(stream):
 # $ python3 -m unittest intervals
 #
 # To run just the one you are working on:
-# $ python3 -m unittest intervals.Test.test_is_overlapping
+# $ python3 -m unittest intervals.OverlappingTest.test_is_overlapping
 
 import unittest
+
+
+# Examples of two overlapping intervals
+OVERLAPPING = (((1, 3), (2, 4)),
+               ((1, 4), (2, 3)),
+               ((2, 4), (1, 3)),
+               ((2, 3), (1, 4)),
+               ((1, 2), (2, 4)),
+               ((1, 4), (3, 4)))
+
 
 class OverlappingTest(unittest.TestCase):
 
   def test_is_overlapping(self):
-    self.assertEqual()
+     for i1, i2 in OVERLAPPING:
+       self.assertTrue(is_overlapping(i1, i2))
+
+  def test_is_not_overlapping(self):
+    self.assertFalse(is_overlapping((1, 2), (3, 4) ))
 
 
 class MergeIntervalsTest(unittest.TestCase):
   def test_merge_intervals(self):
-    self.assertEqual()
+    for i1, i2 in OVERLAPPING:
+      self.assertEqual()
+
+
+SORTED_STREAMS_EXPECTED = (
+    ([(1, 2)], [(3, 4), (5, 6)],
+     [(1, 2), (3, 4), (5, 6)]),
+
+    ([(1, 4)], [(2, 3), (5, 6)],
+     [(1, 4), (2, 3), (5, 6)]),
+
+    ([(2, 3)], [(1, 4), (5, 6)],
+     [(1, 4), (2, 3), (5, 6)]),
+
+    ([], [(1, 4), (5, 6)],
+     [(1, 4), (5, 6)]),
+
+    ([(1, 4), (5, 6)], [(2, 3)],
+     [(1, 4), (2, 3), (5, 6)]))
 
 
 class MergeStreamsTest(unittest.TestCase):
   def test_merge_streams(self):
-    self.assertEqual()
+    for s1, s2, expected in SORTED_STREAMS_EXPECTED:
+      self.assertEqual(list(merge_streams(s1, s2)), expected)
 
 
 class MergeOverlappingTest(unittest.TestCase):
   def test_merge_overlapping(self):
-    self.assertEqual()
+
+    merged = list(
+        merge_overlapping_intervals(
+            merge_2list([(0, 3), (6, 7)],
+                        [(1, 2), (3, 4), (5, 6)])))
+
+    self.assertEqual(merged, [(0, 4), (5, 7)])
