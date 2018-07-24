@@ -6,17 +6,13 @@ def order(interval1, interval2):
 def is_overlapping(interval1, interval2):
     """Returns True when the 2 intervals overlap, False otherwise."""
 
-    if order(interval2, interval1):
-        interval1, interval2 = interval2, interval1
-    return interval1[1] >= interval2[0]
-
-    # return not (interval1[1] < interval2[0] or interval2[1] < interval1[0])
+    return not (interval1[1] < interval2[0] or interval2[1] < interval1[0])
 
 
 def merge_intervals(interval1, interval2):
     """Returns one interval from 2 intervals."""
-    if is_overlapping(interval1, interval2):
-        return min(interval1[0], interval2[0]), max(interval1[1], interval2[1])
+     #if is_overlapping(interval1, interval2):
+    return min(interval1[0], interval2[0]), max(interval1[1], interval2[1])
 
 
 def merge_streams(stream1, stream2):
@@ -24,35 +20,24 @@ def merge_streams(stream1, stream2):
 
     a, b = 0, 0
 
-    # for i in range(0, (len(stream1)+len(stream2))):
-    while True:
-        if len(stream1) == 0:
-            c = 2
-            break
-        if len(stream2) == 0:
-            c = 1
-            break
+    while (len(stream1) != 0 and len(stream2) != 0):
 
         if order(stream1[a], stream2[b]):
             yield stream1[a]
             a += 1
             if a == len(stream1):
-                c = 2
                 break
         else:
             yield stream2[b]
             b += 1
             if b == len(stream2):
-                c = 1
                 break
 
-    if c == 1:
-        for i in range(a, len(stream1)):
-            yield stream1[i]
+    for i in range(a, len(stream1)):
+        yield stream1[i]
 
-    if c == 2:
-        for i in range(b, len(stream2)):
-            yield stream2[i]
+    for i in range(b, len(stream2)):
+        yield stream2[i]
 
 
 def merge_overlapping_intervals(stream):
@@ -60,12 +45,12 @@ def merge_overlapping_intervals(stream):
 
     s = stream[0]
 
-    for a in range(1, len(stream)):
-        if is_overlapping(s, stream[a]):
-            s = merge_intervals(s, stream[a])
+    for interval in stream:
+        if is_overlapping(s, interval):
+            s = merge_intervals(s, interval)
         else:
             yield s
-            s = stream[a]
+            s = interval
 
     yield s
 
