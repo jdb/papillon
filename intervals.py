@@ -31,18 +31,22 @@ def merge_overlapping_intervals(stream):
 
 import unittest
 
-class Test(unittest.TestCase):
+class OverlappingTest(unittest.TestCase):
 
   def test_is_overlapping(self):
     self.assertEqual()
 
+
+class MergeIntervalsTest(unittest.TestCase):
   def test_merge_intervals(self):
     self.assertEqual()
 
-  
+
+class MergeStreamsTest(unittest.TestCase):
   def test_merge_streams(self):
     self.assertEqual()
 
 
+class MergeOverlappingTest(unittest.TestCase):
   def test_merge_overlapping(self):
     self.assertEqual()
