@@ -31,9 +31,6 @@ def merge_streams(stream1, stream2):
         else:
             yield stream2[b]
             b += 1
-
-    #for i in range(a, len(stream1)):
-        #yield stream1[i]
     
     yield from itertools.islice(stream1, a, None)
         
