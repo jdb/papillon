@@ -1,3 +1,5 @@
+import itertools
+
 def order(interval1, interval2):
     """Returns True when intervals are in a good order"""
     return interval1[0] < interval2[0]
@@ -11,7 +13,7 @@ def is_overlapping(interval1, interval2):
 
 def merge_intervals(interval1, interval2):
     """Returns one interval from 2 intervals."""
-     #if is_overlapping(interval1, interval2):
+    
     return min(interval1[0], interval2[0]), max(interval1[1], interval2[1])
 
 
@@ -20,25 +22,22 @@ def merge_streams(stream1, stream2):
 
     a, b = 0, 0
 
-    while (len(stream1) != 0 and len(stream2) != 0):
+    while (len(stream1) > a and len(stream2) > b):
 
         if order(stream1[a], stream2[b]):
             yield stream1[a]
             a += 1
-            if a == len(stream1):
-                break
+
         else:
             yield stream2[b]
             b += 1
-            if b == len(stream2):
-                break
 
-    for i in range(a, len(stream1)):
-        yield stream1[i]
-
-    for i in range(b, len(stream2)):
-        yield stream2[i]
-
+    #for i in range(a, len(stream1)):
+        #yield stream1[i]
+    
+    yield from itertools.islice(stream1, a, None)
+        
+    yield from itertools.islice(stream2, b, None)
 
 def merge_overlapping_intervals(stream):
     """Yields intervals, merging overlapping intervals from the input stream (already sorted)."""
@@ -83,20 +82,12 @@ class OverlappingTest(unittest.TestCase):
 
     def test_is_not_overlapping(self):
         self.assertFalse(is_overlapping((1, 2), (3, 4)))
-
-
-# class MergeIntervalsTest(unittest.TestCase):
-#  def test_merge_intervals(self):
-#    for i1, i2 in OVERLAPPING:
-#      self.assertEqual(i)
+        
 
 class MergeIntervalsTest(unittest.TestCase):
     def test_merge_intervals(self):
         for i1, i2 in OVERLAPPING:
             self.assertEqual(merge_intervals(i1, i2), (1, 4))
-
-
-SORTED_STREAMS_EXPECTED = ()
 
 
 class MergeStreamsTest(unittest.TestCase):
