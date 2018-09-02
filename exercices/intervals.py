@@ -1,5 +1,6 @@
 
 
+
 def is_overlapping(interval1, interval2):
   """Returns True when the 2 intervals overlap, False otherwise."""
   raise NotImplementedError()
@@ -10,13 +11,13 @@ def merge_intervals(interval1, interval2):
   raise NotImplementedError()
 
 
-def merge_streams(stream1, stream2):
-  """Yields intervals from each of the input sorted stream, in order."""
-  raise NotImplementedError()
-
-
 def merge_overlapping_intervals(stream):
-  """Yields intervals, merging overlapping intervals from the input stream."""
+  """Yields intervals, merging overlapping intervals from the input stream.
+
+  Hint: you'll likely want to use heapq.merge to create an iterator
+  from 2 sorted streams.
+
+  """
   raise NotImplementedError()
 
 
@@ -55,30 +56,7 @@ class MergeIntervalsTest(unittest.TestCase):
   def test_merge_intervals(self):
     for i1, i2 in OVERLAPPING:
       self.assertEqual()
-
-
-SORTED_STREAMS_EXPECTED = (
-    ([(1, 2)], [(3, 4), (5, 6)],
-     [(1, 2), (3, 4), (5, 6)]),
-
-    ([(1, 4)], [(2, 3), (5, 6)],
-     [(1, 4), (2, 3), (5, 6)]),
-
-    ([(2, 3)], [(1, 4), (5, 6)],
-     [(1, 4), (2, 3), (5, 6)]),
-
-    ([], [(1, 4), (5, 6)],
-     [(1, 4), (5, 6)]),
-
-    ([(1, 4), (5, 6)], [(2, 3)],
-     [(1, 4), (2, 3), (5, 6)]))
-
-
-class MergeStreamsTest(unittest.TestCase):
-  def test_merge_streams(self):
-    for s1, s2, expected in SORTED_STREAMS_EXPECTED:
-      self.assertEqual(list(merge_streams(s1, s2)), expected)
-
+      
 
 class MergeOverlappingTest(unittest.TestCase):
   def test_merge_overlapping(self):
