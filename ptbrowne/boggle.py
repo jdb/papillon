@@ -24,16 +24,15 @@ def mark_seen(seen, pos, val):
   del seen[pos]
 
 
-def walk(pos, get_neighbors, get_value, get_path, mark, is_ok, is_stop):
+def walk(pos, seen, get_neighbors, get_context):
   for neighbor in get_neighbors(pos):
-    val = get_value(neighbor)
-    val_path = get_path(neighbor)
-    if is_ok(val_path):
-      yield val_path
-    if not is_stop(val_path):
-      with mark(neighbor, val):
-        yield from walk(neighbor, get_neighbors, get_value, get_path, mark, is_ok, is_stop)
-
+    ctx = get_context(neighbor)
+    if ctx['ok']:
+      yield ctx['yield']
+    if not ctx['stop']:
+      seen[pos] = ctx['mark']
+      yield from walk(neighbor, seen, get_neighbors, get_context)
+      del seen[pos]
 
 class Grid:
   """
@@ -75,13 +74,19 @@ class Grid:
     neighbors = lambda pos: (
       pos for pos in self.neighbors(pos) if not seen.get(pos)
     )
-    is_ok = self.lexicon.is_word
-    is_stop = lambda string: not self.lexicon.is_prefix(string)
-    value = self.value_at
-    path = lambda pos: ''.join(seen.values()) + self.value_at(pos)
-    mark = lambda pos, value: mark_seen(seen, pos, value)
+    def get_context(pos):
+      letter = self.value_at(pos)
+      word = ''.join(seen.values()) + letter
+      is_prefix, is_word = self.lexicon.info(word)
+      return {
+        'ok': is_word,
+        'yield': word,
+        'stop': not is_prefix,
+        'mark': letter
+      }
+    mark = lambda pos, ctx: mark_seen(seen, pos, ctx['letter'])
 
-    yield from walk(pos, neighbors, value, path, mark, is_ok, is_stop)
+    yield from walk(pos, seen, neighbors, get_context)
 
   def words_iter(self):
     """Yields all the words that can be formed in the grid"""
