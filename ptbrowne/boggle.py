@@ -11,17 +11,17 @@
 # - is_prefix(string): Returns whether the given string is a prefix of
 #   at least one word in the dictionary.
 import json
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from contextlib import contextmanager
 
 DX = [-1, 0, 1]
 DY = [-1, 0, 1]
 
 @contextmanager
-def mark_seen(seen, i, j):
-  seen[i][j] = True
+def mark_seen(seen, pos, val):
+  seen[pos] = val
   yield
-  seen[i][j] = False
+  del seen[pos]
 
 class Grid:
   """
@@ -53,8 +53,8 @@ class Grid:
   def _visit(self, pos, seen=None, cur_word=''):
     """Yields all the words that can be formed from a position in the grid"""
     if not seen:
-      seen = [[False for j in range(self.ncols)] for i in range(self.nrows)]
-    unseen_neighbors = (pos for pos in self.neighbors(pos) if not seen[pos[0]][pos[1]])
+      seen = OrderedDict()
+    unseen_neighbors = (pos for pos in self.neighbors(pos) if not seen.get(pos))
     for next_pos in unseen_neighbors:
       i, j = next_pos
       next_letter = self.data[i][j]
@@ -63,7 +63,7 @@ class Grid:
       if is_word:
         yield next_word
       if is_prefix:
-        with mark_seen(seen, i, j):
+        with mark_seen(seen, pos, next_letter):
           yield from self._visit(next_pos, seen, next_word)
 
   def words_iter(self):
