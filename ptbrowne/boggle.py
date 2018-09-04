@@ -50,7 +50,7 @@ class Grid:
         if ni >= 0 and ni < nrows and nj >= 0 and nj < ncols:
           yield ni, nj
 
-  def _visit(self, pos, seen=None):
+  def _walk(self, pos, seen=None):
     """Yields all the words that can be formed from a position in the grid"""
     if not seen:
       seen = OrderedDict()
@@ -65,14 +65,14 @@ class Grid:
         yield next_word
       if is_prefix:
         with mark_seen(seen, pos, next_letter):
-          yield from self._visit(next_pos, seen)
+          yield from self._walk(next_pos, seen)
 
   def words_iter(self):
     """Yields all the words that can be formed in the grid"""
     starts = [(i, j) for i in range(self.nrows) for j in range(self.ncols)]
 
     for start in starts:
-      yield from self._visit(start)
+      yield from self._walk(start)
 
   def words(self):
     """Returns all the words that can be formed in the grid as a list"""
