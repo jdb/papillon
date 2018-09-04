@@ -84,8 +84,8 @@ class TrieNode(object):
 
 class Lexicon:
   """
-  Lexicon is used for fast checks (O(n)), of whether or not a prefix/word
-  is part of a particular dataset.
+  Lexicon is used for fast checks (O(k)), of whether or not a prefix/word
+  is part of a particular dataset (k being the length of the prefix/word).
 
   Its underlying data structure is a trie. 
 
