@@ -50,11 +50,12 @@ class Grid:
         if ni >= 0 and ni < nrows and nj >= 0 and nj < ncols:
           yield ni, nj
 
-  def _visit(self, pos, seen=None, cur_word=''):
+  def _visit(self, pos, seen=None):
     """Yields all the words that can be formed from a position in the grid"""
     if not seen:
       seen = OrderedDict()
     unseen_neighbors = (pos for pos in self.neighbors(pos) if not seen.get(pos))
+    cur_word = ''.join(seen.values())
     for next_pos in unseen_neighbors:
       i, j = next_pos
       next_letter = self.data[i][j]
@@ -64,7 +65,7 @@ class Grid:
         yield next_word
       if is_prefix:
         with mark_seen(seen, pos, next_letter):
-          yield from self._visit(next_pos, seen, next_word)
+          yield from self._visit(next_pos, seen)
 
   def words_iter(self):
     """Yields all the words that can be formed in the grid"""
