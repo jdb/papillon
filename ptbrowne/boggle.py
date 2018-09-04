@@ -23,6 +23,18 @@ def mark_seen(seen, pos, val):
   yield
   del seen[pos]
 
+
+def walk(pos, get_neighbors, get_value, get_path, mark, is_ok, is_stop):
+  for neighbor in get_neighbors(pos):
+    val = get_value(neighbor)
+    val_path = get_path(neighbor)
+    if is_ok(val_path):
+      yield val_path
+    if not is_stop(val_path):
+      with mark(neighbor, val):
+        yield from walk(neighbor, get_neighbors, get_value, get_path, mark, is_ok, is_stop)
+
+
 class Grid:
   """
   Grid represents a grid of letter. It is possible to get all the words
@@ -50,22 +62,26 @@ class Grid:
         if ni >= 0 and ni < nrows and nj >= 0 and nj < ncols:
           yield ni, nj
 
+  def value_at(self, pos):
+    i, j = pos
+    return self.data[i][j]
+
   def _walk(self, pos, seen=None):
     """Yields all the words that can be formed from a position in the grid"""
+
     if not seen:
       seen = OrderedDict()
-    unseen_neighbors = (pos for pos in self.neighbors(pos) if not seen.get(pos))
-    cur_word = ''.join(seen.values())
-    for next_pos in unseen_neighbors:
-      i, j = next_pos
-      next_letter = self.data[i][j]
-      next_word = cur_word + next_letter
-      is_prefix, is_word = self.lexicon.info(next_word)
-      if is_word:
-        yield next_word
-      if is_prefix:
-        with mark_seen(seen, pos, next_letter):
-          yield from self._walk(next_pos, seen)
+
+    neighbors = lambda pos: (
+      pos for pos in self.neighbors(pos) if not seen.get(pos)
+    )
+    is_ok = self.lexicon.is_word
+    is_stop = lambda string: not self.lexicon.is_prefix(string)
+    value = self.value_at
+    path = lambda pos: ''.join(seen.values()) + self.value_at(pos)
+    mark = lambda pos, value: mark_seen(seen, pos, value)
+
+    yield from walk(pos, neighbors, value, path, mark, is_ok, is_stop)
 
   def words_iter(self):
     """Yields all the words that can be formed in the grid"""
