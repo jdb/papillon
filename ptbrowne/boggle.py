@@ -36,9 +36,9 @@ def walk(pos, seen, get_neighbors, get_context):
 
 class Grid:
   """
-  Grid represents a grid of letter. It is possible to get all the words
-  from a lexicon that can be formed in a grid.
+  Grid represents a grid of letter.
 
+  It is possible to get all the words from a lexicon that can be formed in a grid.
   It has graph like features to perform lexicon optimized traversals.
   """
   def __init__(self, *lines, **kwargs):
