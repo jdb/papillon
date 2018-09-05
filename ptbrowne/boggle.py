@@ -13,6 +13,7 @@
 
 
 class Grid:
+  # Good morning Pat, can you fill in the blanks? :) 
   pass
 
 class Lexicon:
