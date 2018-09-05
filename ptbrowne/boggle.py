@@ -99,11 +99,6 @@ class Grid:
     """Returns all the words that can be formed in the grid as a list"""
     return list(self.words_iter())
 
-class TrieNode(object):
-  def __init__(self):
-    self.is_word = False
-    self.trie = defaultdict(lambda: TrieNode())
-
 class Lexicon:
   """
   Lexicon is used for fast checks (O(k)), of whether or not a prefix/word
@@ -123,17 +118,18 @@ class Lexicon:
   path is a word.
   """
   def __init__(self):
-    self.root = TrieNode()
+    self.word = False
+    self.trie = defaultdict(lambda: Lexicon())
 
   def add(self, word):
     """Add a word to the lexicon trie"""
     _len = len(word)
-    trie = self.root.trie
+    trie = self.trie
     for i, letter in enumerate(word):
       node = trie[letter]
       is_last_letter = i == _len - 1
-      if not node.is_word and is_last_letter:
-        node.is_word = True
+      if not node.word and is_last_letter:
+        node.word = True
       trie = node.trie
 
   def get_node(self, string):
@@ -142,7 +138,7 @@ class Lexicon:
 
     Returns None if the string is not in the trie.
     """
-    node = self.root
+    node = self
     for letter in string:
       if letter in node.trie:
         node = node.trie[letter]
@@ -163,7 +159,7 @@ class Lexicon:
   def is_word(self, word):
     """Returns True if the word is found in the lexicon"""
     leaf = self.get_node(word)
-    return leaf and leaf.is_word
+    return leaf and leaf.word
 
   def info(self, word):
     """is_prefix and is_word in one traversal"""
@@ -171,7 +167,7 @@ class Lexicon:
     return bool(leaf), leaf and leaf.is_word
 
   def __repr__(self):
-    return json.dumps(self.root, indent=2)
+    return json.dumps(self, indent=2)
 
 
 # run the unittest with python3 -m unittest boggle.py
