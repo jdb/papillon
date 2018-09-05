@@ -1,4 +1,5 @@
 #-*- coding: utf-8 -*-
+import unittest
 
 class Grid:
   def __init__(self, grid_str):
@@ -56,7 +57,7 @@ class Grid:
       for row in self.grid
     )
 
-def test(grid_str, expected_count, verbose=False):
+def run_test(grid_str, expected_count):
   grid = Grid(grid_str)
   count = grid.count_islands()
   ok = expected_count == count
@@ -64,80 +65,93 @@ def test(grid_str, expected_count, verbose=False):
   print(grid)
 
 
+class TestIslands(unittest.TestCase):
+  def test_islands(self):
+    tests = [
+      ("""
+        0101000
+        1101100
+        1111001
+        0000010
+      """, 3),
+
+      ("""
+        0101000
+        1101100
+        1101000
+      """, 2),
+
+      ("""
+        0101000
+        1101100
+        1101000
+        1101001
+      """, 3),
+
+      ("""
+        0101000
+        1101100
+        1111001
+        0000011
+      """, 2),
+
+      ("""
+        0111000
+        0101100
+        1101001
+        0000011
+      """, 2),
+
+      ("""
+        0111011
+        0001110
+        1101001
+        0000011
+      """, 3),
+
+      ("""
+        0101011
+        0001110
+        1101001
+        0000011
+      """, 4),
+
+      ("""
+        0101011
+        0001010
+        1101001
+        0000011
+      """, 5),
+
+      ("""
+        1111111
+        1000001
+        1000001
+        1111111
+      """, 1),
+
+      ("""
+        1110110
+        0100101
+        1100110
+        0000000
+      """, 3),
+
+      ("""
+        1100011
+        0111010
+        0001110
+        0000100
+      """, 1)
+    ]
+    for grid_str, expected_count in tests:
+      if getattr(self, 'interactive', False):
+        run_test(grid_str, expected_count)
+      else:
+        self.assertEqual(expected_count, Grid(grid_str).count_islands())
+
 if __name__ == '__main__':
-  test("""
-    0101000
-    1101100
-    1111001
-    0000010
-  """, 3)
+  tests = TestIslands()
+  tests.interactive = True
+  tests.test_islands()
 
-  test("""
-    0101000
-    1101100
-    1101000
-  """, 2)
-
-  test("""
-    0101000
-    1101100
-    1101000
-    1101001
-  """, 3)
-
-  test("""
-    0101000
-    1101100
-    1111001
-    0000011
-  """, 2)
-
-  test("""
-    0111000
-    0101100
-    1101001
-    0000011
-  """, 2)
-
-  test("""
-    0111011
-    0001110
-    1101001
-    0000011
-  """, 3)
-
-  test("""
-    0101011
-    0001110
-    1101001
-    0000011
-  """, 4)
-
-  test("""
-    0101011
-    0001010
-    1101001
-    0000011
-  """, 5)
-
-
-  test("""
-    1111111
-    1000001
-    1000001
-    1111111
-  """, 1)
-
-  test("""
-    1110110
-    0100101
-    1100110
-    0000000
-  """, 3)
-
-  test("""
-    1100011
-    0111010
-    0001110
-    0000100
-  """, 1)
