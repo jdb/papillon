@@ -57,14 +57,6 @@ class Grid:
       for row in self.grid
     )
 
-def run_test(grid_str, expected_count):
-  grid = Grid(grid_str)
-  count = grid.count_islands()
-  ok = expected_count == count
-  print('expected {}, got {} {}'.format(expected_count, count, '✅' if ok else '❌'))
-  print(grid)
-
-
 class TestIslands(unittest.TestCase):
   def test_islands(self):
     tests = [
@@ -144,14 +136,16 @@ class TestIslands(unittest.TestCase):
         0000100
       """, 1)
     ]
+    show_output = __name__ == '__main__'
     for grid_str, expected_count in tests:
-      if getattr(self, 'interactive', False):
-        run_test(grid_str, expected_count)
-      else:
-        self.assertEqual(expected_count, Grid(grid_str).count_islands())
+      grid = Grid(grid_str)
+      count = grid.count_islands()
+      ok = expected_count == count
+      self.assertEqual(count, expected_count)
+      if show_output:
+        print('expected {}, got {} {}'.format(expected_count, count, '✅' if ok else '❌'))
+        print(grid)
 
 if __name__ == '__main__':
-  tests = TestIslands()
-  tests.interactive = True
-  tests.test_islands()
+  unittest.main()
 
