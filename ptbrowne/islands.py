@@ -134,17 +134,26 @@ class TestIslands(unittest.TestCase):
         0111010
         0001110
         0000100
-      """, 1)
+      """, 1),
+
+      ("""
+        1110110001001110111010111010101010111
+        0100101011101010101000101011101110101
+        0100101001001110110010111010101010111
+        1100110000001010101010101010101010101
+      """, 13)
     ]
     show_output = __name__ == '__main__'
     for grid_str, expected_count in tests:
       grid = Grid(grid_str)
       count = grid.count_islands()
       ok = expected_count == count
-      self.assertEqual(count, expected_count)
+      str_ok = '✅' if ok else '❌'
+      str_ok = "❤️" if ok and count == 13 else str_ok
       if show_output:
-        print('expected {}, got {} {}'.format(expected_count, count, '✅' if ok else '❌'))
+        print('expected {}, got {} {}'.format(expected_count, count, str_ok))
         print(grid)
+      self.assertEqual(count, expected_count)
 
 if __name__ == '__main__':
   unittest.main()
