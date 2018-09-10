@@ -1,5 +1,9 @@
 import unittest
+import operator
+from itertools import product, chain
 
+def flatmap(iterable, fn):
+  return chain.from_iterable(map(fn, iterable))
 
 def dfs(node, neighbors, already, depth = 0):
   if node not in already:
@@ -8,29 +12,27 @@ def dfs(node, neighbors, already, depth = 0):
     for neighbor in set(neighbors(node)) - already:
       yield from dfs(neighbor, neighbors, already, depth + 1)
 
-
 def count_islands(grid):
-  already = set()
   rows = len(grid)
   cols = len(grid[0])
 
-  def neighbors(pos):
-    for dx, dy in [
-      (0, -1), (0, 1), (-1, 0), (1, 0)
-    ]:
-      nx, ny = pos[0] + dx, pos[1] + dy
-      if 0 <= nx < rows and 0 <= ny < cols and grid[nx][ny] == '1':
-        yield nx, ny
+  def inside_boundary(pos):
+    return 0 <= pos[0] < rows and 0 <= pos[1] < cols
 
-  starts = list(
-    (i, j)
-    for i in range(len(grid))
-    for j in range(len(grid[0]))
-    if grid[i][j] == '1'
-  )
+  def is_earth(pos):
+    x, y = pos
+    return grid[x][y] == '1'
+
+  def neighbors(pos):
+    deltas = [(0, -1), (0, 1), (-1, 0), (1, 0)]
+    neighbors = map(lambda delta: tuple(map(operator.add, pos, delta)), deltas)
+    return filter(lambda pos: inside_boundary(pos) and is_earth(pos), neighbors)
+
+  starts = filter(is_earth, product(range(rows), range(cols)))
   already = set()
-  cell_depths = list((cell, depth) for start in starts for cell, depth in dfs(start, neighbors, already))
-  return sum(1 for cell, depth in cell_depths if depth == 0)
+  dfs_ = lambda start: dfs(start, neighbors, already)
+  depths = flatmap(starts, dfs_)
+  return sum(map(lambda _: 1, filter(lambda celldepth: celldepth[1] == 0, depths)))
 
 
 class TestIslands(unittest.TestCase):
@@ -123,3 +125,7 @@ class TestIslands(unittest.TestCase):
     for grid_str, expected in tests:
       grid = [line.strip() for line in grid_str.split('\n') if line.strip()]
       self.assertEqual(expected, count_islands(grid))
+
+
+if __name__ == '__main__':
+  unittest.main()
