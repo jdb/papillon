@@ -1,6 +1,6 @@
 """Let's build a 'Trie' datastructure.
 
-When you know a list of words, there are two frequent questions: 
+When you know a list of words, there are two frequent questions:
 - is this arbitratry string a prefix of a known word?
 - is this arbitrary string a full known word?
 
@@ -12,24 +12,33 @@ When you have a Trie datastructure, you can use 2 functions or methods:
 from typing import List
 
 def init_trie(words: List[str]):
-    """Returns a Trie datastructure."""
-    raise NotImplementedError()
-
+    """Returns a Trie datastructure. """
+    return words
 
 def is_prefix(trie, string: str) -> bool:
-    """Returns True if the string is a prefix for one or more words."""
-    raise NotImplementedError()
+    """ Returns True if the string is a prefix for one or more words."""
+
+    for i in range(0,len(trie)):
+        if trie[i].startswith(string):
+            return True
+    return False
+
 
 
 def is_word(trie, string: str) -> bool:
     """Returns True if the string is a full correct word."""
-    raise NotImplementedError()
+
+    for i in range(0,len(trie)):
+        if trie[i]==string:
+            return True
+    return False
 
 
 # To run all the tests:
 # $ python3 -m unittest trie
 
 # To run one specific test:
+# $ python3 -m unittest trie.TrieTest
 # $ python3 -m unittest trie.TrieTest.test_init
 # $ python3 -m unittest trie.TrieTest.test_is_prefix
 # $ python3 -m unittest trie.TrieTest.test_is_word
@@ -51,7 +60,7 @@ class TrieTest(unittest.TestCase):
 
     def test_is_prefix(self):
         trie = init_trie(['car', 'cat', 'python'])
-        
+
         self.assertTrue(is_prefix(trie, 'ca'))
         self.assertTrue(is_prefix(trie, 'car'))
         self.assertTrue(is_prefix(trie, 'cat'))
@@ -65,3 +74,4 @@ class TrieTest(unittest.TestCase):
         self.assertTrue(is_word(trie, 'python'))
 
         self.assertFalse(is_word(trie, 'zebra'))
+
