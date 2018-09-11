@@ -5,7 +5,7 @@ When you know a list of words, there are two frequent questions:
 - is this arbitrary string a full known word?
 
 When you have a Trie datastructure, you can use 2 functions or methods:
-- is_prefix(string) -> a boolean
+- is_prefix(string) -> a boolean,
 - is_word(string) -> a boolean.
 """
 
