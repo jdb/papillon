@@ -30,7 +30,6 @@ def is_word(trie, string: str) -> bool:
 # $ python3 -m unittest trie
 
 # To run one specific test:
-# $ python3 -m unittest trie.TrieTest
 # $ python3 -m unittest trie.TrieTest.test_init
 # $ python3 -m unittest trie.TrieTest.test_is_prefix
 # $ python3 -m unittest trie.TrieTest.test_is_word
