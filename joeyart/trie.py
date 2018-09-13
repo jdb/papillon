@@ -10,28 +10,68 @@ When you have a Trie datastructure, you can use 2 functions or methods:
 """
 
 from typing import List
+import math
 
-def init_trie(words: List[str]):
-    """Returns a Trie datastructure. """
-    return words
+class Trie:
 
-def is_prefix(trie, string: str) -> bool:
-    """ Returns True if the string is a prefix for one or more words."""
+    def __init__(self, words: List[str]=None):
+        """Returns a Trie datastructure. """
+        if words is None:
+          words = [] 
+          with open('/usr/share/dict/american-english') as f:
+            for word in f:
+              words.append(word.strip())  
+        self.my_words = words
 
-    for i in range(0,len(trie)):
-        if trie[i].startswith(string):
-            return True
-    return False
+    def is_prefix(self, string: str) -> bool:
+        """ Returns True if the string is a prefix for one or more words."""
+        
+        sdc=math.ceil(len(self.my_words)/2)
+        d=sdc
+        number_of_words = len(self.my_words)
+        word=self.my_words[d]
+        
+        if ~word.startswith(string):
+            print (word)
+ 
+            if string>word:
+                d=d+sdc
+            else:
+                d=d-sdc
+            if (d<0 or d>=number_of_words):
+                return 0
+            if word==self.my_words[d]:
+                return 0
+            word=self.my_words[d]
+            
+        print (word)
+        
+        return 1
 
-
-
-def is_word(trie, string: str) -> bool:
-    """Returns True if the string is a full correct word."""
-
-    for i in range(0,len(trie)):
-        if trie[i]==string:
-            return True
-    return False
+    def is_word(self, string: str) -> bool:
+        """Returns True if the string is a full correct word."""
+        
+        sdc=math.ceil(len(self.my_words)/2)
+        d=sdc
+        number_of_words = len(self.my_words)
+        word=self.my_words[d]
+        
+        if ~(word==string):
+            print (word)
+ 
+            if string>word:
+                d=d+sdc
+            else:
+                d=d-sdc
+            if (d<0 or d>=number_of_words):
+                return 0
+            if word==self.my_words[d]:
+                return 0
+            word=self.my_words[d]
+            
+        print (word)
+        
+        return 1
 
 
 # To run all the tests:
@@ -56,22 +96,21 @@ import unittest
 class TrieTest(unittest.TestCase):
 
     def test_init(self):
-        self.assertIsNotNone(init_trie(['car', 'cat', 'python']))
+        self.assertIsNotNone(Trie(['car', 'cat', 'python']))
 
     def test_is_prefix(self):
-        trie = init_trie(['car', 'cat', 'python'])
+        trie = Trie(['car', 'cat', 'python'])
 
-        self.assertTrue(is_prefix(trie, 'ca'))
-        self.assertTrue(is_prefix(trie, 'car'))
-        self.assertTrue(is_prefix(trie, 'cat'))
+        self.assertTrue(trie.is_prefix('ca'))
+        self.assertTrue(trie.is_prefix('car'))
+        self.assertTrue(trie.is_prefix('cat'))
 
-        self.assertFalse(is_prefix(trie, 'zebr'))
+        self.assertFalse(trie.is_prefix('zebr'))
 
     def test_is_word(self):
-        trie = init_trie(['car', 'cat', 'python'])
-        self.assertTrue(is_word(trie, 'car'))
-        self.assertTrue(is_word(trie, 'cat'))
-        self.assertTrue(is_word(trie, 'python'))
+        trie = Trie(['car', 'cat', 'python'])
+        self.assertTrue(trie.is_word('car'))
+        self.assertTrue(trie.is_word('cat'))
+        self.assertTrue(trie.is_word('python'))
 
-        self.assertFalse(is_word(trie, 'zebra'))
-
+        self.assertFalse(trie.is_word('zebra'))
