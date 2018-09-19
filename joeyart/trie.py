@@ -16,62 +16,13 @@ class Trie:
 
     def __init__(self, words: List[str]=None):
         """Returns a Trie datastructure. """
-        if words is None:
-          words = [] 
-          with open('/usr/share/dict/american-english') as f:
-            for word in f:
-              words.append(word.strip())  
-        self.my_words = words
+
 
     def is_prefix(self, string: str) -> bool:
         """ Returns True if the string is a prefix for one or more words."""
-        
-        sdc=math.ceil(len(self.my_words)/2)
-        d=sdc
-        number_of_words = len(self.my_words)
-        word=self.my_words[d]
-        
-        if ~word.startswith(string):
-            print (word)
  
-            if string>word:
-                d=d+sdc
-            else:
-                d=d-sdc
-            if (d<0 or d>=number_of_words):
-                return 0
-            if word==self.my_words[d]:
-                return 0
-            word=self.my_words[d]
-            
-        print (word)
-        
-        return 1
-
     def is_word(self, string: str) -> bool:
         """Returns True if the string is a full correct word."""
-        
-        sdc=math.ceil(len(self.my_words)/2)
-        d=sdc
-        number_of_words = len(self.my_words)
-        word=self.my_words[d]
-        
-        if ~(word==string):
-            print (word)
- 
-            if string>word:
-                d=d+sdc
-            else:
-                d=d-sdc
-            if (d<0 or d>=number_of_words):
-                return 0
-            if word==self.my_words[d]:
-                return 0
-            word=self.my_words[d]
-            
-        print (word)
-        
-        return 1
 
 
 # To run all the tests:
