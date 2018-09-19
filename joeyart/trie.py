@@ -10,19 +10,41 @@ When you have a Trie datastructure, you can use 2 functions or methods:
 """
 
 from typing import List
-import math
+
+
+def _add_word(trie, word):
+    if not word:
+        return
+    first, *rest = word
+    _add_word(trie.setdefault(first, dict()), rest)
+
+
+def _search_word (trie, word):
+    if not word:
+        return True
+    first,*rest = word
+    if first in trie:
+        return _search_word(trie[first], rest)
+    else:
+        return False
+
 
 class Trie:
 
     def __init__(self, words: List[str]=None):
         """Returns a Trie datastructure. """
-
+        self.trie = {}
+        for word in words:
+            _add_word(self.trie, word+'\n')
 
     def is_prefix(self, string: str) -> bool:
         """ Returns True if the string is a prefix for one or more words."""
+        return _search_word(self.trie, string)
+
  
     def is_word(self, string: str) -> bool:
         """Returns True if the string is a full correct word."""
+        return _search_word(self.trie, string+'\n')
 
 
 # To run all the tests:
@@ -45,6 +67,11 @@ import unittest
 
 
 class TrieTest(unittest.TestCase):
+
+    def test_add(self):
+        trie = {}
+        for word in 'jd\n', 'asia\n':
+            _add_word(trie, word)
 
     def test_init(self):
         self.assertIsNotNone(Trie(['car', 'cat', 'python']))
