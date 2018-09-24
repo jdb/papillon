@@ -7,81 +7,98 @@ itself. Lowest first.
 import unittest
 
 
-def ancestors(tree, node):
+def ancestors(node):
   """Returns ancestors of a node in a binary tree. Includes itself."""
-  if tree == node:
-    return [node]
-  else:
-    for leaf in [tree.left, tree.right]:
-      if leaf:
-        ancestors_leaf = ancestors(leaf, node)
-        if ancestors_leaf is not None:
-          ancestors_leaf.append(tree)
-          return ancestors_leaf
+  while node:
+    yield node
+    node = node.parent
 
 
-def common_ancestor(tree, node_a, node_b):
-  """Returns common ancestor of two binary trees"""
-  return next(
-      reversed([
-          ancestor_a
-          for (ancestor_a, ancestor_b) in zip(
-              reversed(list(ancestors(tree, node_a))),
-              reversed(list(ancestors(tree, node_b)))
-          ) if ancestor_a == ancestor_b
-      ]),
-      None
-  )
+def common_ancestor(node_a, node_b):
+  """Returns common ancestor of two binary trees.
+
+  O(1) memory. O(nb_ancestors) CPU"""
+  ancestors_a = ancestors(node_a)
+  ancestors_b = ancestors(node_b)
+  lowest_ancestors = ancestors_a if node_a.level > node_b.level else ancestors_b
+  for _ in range(abs(node_a.level - node_b.level)):
+    next(lowest_ancestors)
+  same = (pa for pa, pb in zip(ancestors_a, ancestors_b) if pa == pb)
+  return next(same)
 
 
 class BinaryTree:
-  def __init__(self, value, left=None, right=None):
+  """Binary tree, each node knows its parent and level"""
+  def __init__(self, value, left=None, right=None, parent=None):
     self.left = left
     self.right = right
     self.value = value
+    self.set_parent(parent)
+
+  def set_parent(self, parent):
+    """Sets the parent and updates the level"""
+    self.parent = parent
+    self.level = parent.level + 1 if parent else 0
 
   def __repr__(self):
     return "BinaryTree<value={value}>".format(value=self.value)
 
 
+def tree_from_tuples(tuple_tree, parent=None):
+  """Returns a tree from a tuple representation"""
+  node = BinaryTree(tuple_tree[0], None, None, parent)
+  left = tree_from_tuples(tuple_tree[1], node) if tuple_tree[1] else None
+  right = tree_from_tuples(tuple_tree[2], node) if tuple_tree[2] else None
+  node.left = left
+  node.right = right
+  return node
+
+
 class TestBinaryTree(unittest.TestCase):
+  """Test for binary tree"""
   def test_ancestors(self):
-    node = BinaryTree(10, None, None)
-    tree = BinaryTree(
-        1,
-        BinaryTree(
-            3,
-            BinaryTree(4, None, None),
-            BinaryTree(5, node, None)
-        ),
-        BinaryTree(6, None, None)
+    """Test the ancestors methods"""
+    tree = tree_from_tuples(
+        (1,
+         (3,
+          (4, None, None),
+          (5,
+           None,
+           (10, None, None)
+          )
+         ),
+         (6, None, None)
+        )
     )
+    node = tree.left.right.right # 10
     self.assertEqual(
-        [x.value for x in ancestors(tree, node)],
+        [x.value for x in ancestors(node)],
         [10, 5, 3, 1]
     )
 
 
   def test_common_ancestors(self):
-    node = BinaryTree(10)
-    node_4 = BinaryTree(4)
-    node_15 = BinaryTree(15)
-    node_16 = BinaryTree(16)
-    tree = BinaryTree(
-        1,
-        BinaryTree(
-            3,
-            node_4,
-            BinaryTree(5, node)
-        ),
-        BinaryTree(
-            6,
-            node_15,
-            BinaryTree(
-                7,
-                node_16
-            )
+    """Test the common ancestors"""
+    tree = tree_from_tuples(
+        (1,
+         (3,
+          (4, None, None),
+          (5, None, None)
+         ),
+         (6,
+          (15, None, None),
+          (7,
+           None,
+           (16, None, None)
+          )
+         )
         )
     )
-    self.assertEqual(common_ancestor(tree, node_15, node_16).value, 6)
-    self.assertEqual(common_ancestor(tree, node_4, node_16).value, 1)
+    node_15 = tree.right.left
+    node_16 = tree.right.right.right
+    node_4 = tree.left.left
+    assert node_15
+    assert node_16
+    assert node_4
+    self.assertEqual(common_ancestor(node_15, node_16).value, 6)
+    self.assertEqual(common_ancestor(node_4, node_16).value, 1)
