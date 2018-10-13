@@ -23,6 +23,8 @@ itself. Lowest first.
 2. Given two binary tree nodes, returns the lowest common ancestor.
 """
 
+
+# to run the unit tests: python3 -m unittest common_ancestor
 import unittest
 
 
@@ -38,14 +40,14 @@ class TestBinaryTree(unittest.TestCase):
            None,
            (10,))),
          (6,)))
-    node = tree.left.right.right # 10
+    node_10 = tree.left.right.right # 10
     self.assertEqual(
-        [x.value for x in tree.ancestors(node)],
+        [x.value for x in node.ancestors()],
         [10, 5, 3, 1])
 
 
   def test_common_ancestors(self):
-    tree = tree_from_tuples(
+    tree = BinaryTree(
         (1,
          (3,
           (4,),
