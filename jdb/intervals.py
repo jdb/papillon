@@ -6,18 +6,18 @@ return one list of non overlapping intervals.
 
 import heapq
 
-def overlap(ia, ib):
-  first, second = (ia, ib) if ia[0] <= ib[0] else (ib, ia)
+def overlapping(first, second):
+  "Make sure first[0] < second[0]"
   return first[1] >=  second[0]
 
-def merge_interval(ia, ib):
-  return min(ia[0], ib[0]), max(ia[1], ib[1])
+def merge_interval(a, b):
+  return min(a[0], b[0]), max(a[1], b[1])
 
 def merge(*sequences):
   merged = heapq.merge(*sequences)
   first = next(merged)
   for second in merged:
-    if overlap(first, second):
+    if overlapping(first, second):
       first = merge_interval(first, second)
     else:
       yield first
@@ -52,3 +52,7 @@ class MergeOverlappingTest(unittest.TestCase):
 
     self.assertEqual(merged, [(0, 4), (5, 7)])
     self.assertEqual(list(merge([])), [], [])
+
+  def test_overlapping(self):
+    for a, b in OVERLAPPING:
+      self.assertTrue(overlapping(*sorted([a,b])))
