@@ -16,20 +16,38 @@ def greet(greeting):
         writer.close()
     return wrapped
 
-loop = asyncio.get_event_loop()
-coro = asyncio.start_server(greet('Hello'), '127.0.0.1', 8888, loop=loop)
-coro2 = asyncio.start_server(greet('Bonjour'), '127.0.0.1', 8889, loop=loop)
-server = loop.run_until_complete(coro)
-server2 = loop.run_until_complete(coro2)
 
+server_configs = {
+    'en': (greet('Hello'), '127.0.0.1', 8888),
+    'fr': (greet('Bonjour'), '127.0.0.1', 8889)
+}
+
+
+def run_servers(loop, configs):
+    servers = {}
+    for lang, server_config in server_configs.items():
+        server_coro = asyncio.start_server(*server_config)
+        servers[lang] = loop.run_until_complete(server_coro)
+
+    for lang, server in servers.items():
+        print('Serving on {}'.format(server.sockets[0].getsockname()))
+
+    return servers
+
+
+def close_servers(loop, servers):
+    for server in servers:
+        server.close()
+        loop.run_until_complete(server.wait_closed())
+
+
+loop = asyncio.get_event_loop()
+
+servers = run_servers(loop, server_configs)
 # Serve requests until Ctrl+C is pressed
-print('Serving on {}'.format(server.sockets[0].getsockname()))
 try:
     loop.run_forever()
 except KeyboardInterrupt:
     pass
-
-# Close the server
-server.close()
-loop.run_until_complete(server.wait_closed())
+close_servers(loop, servers.values())
 loop.close()
