@@ -15,7 +15,7 @@ async def tcp_echo_client(language, name):
     reader, writer = await asyncio.open_connection(
         '127.0.0.1',
         SERVERS[language],
-        loop=loop
+        loop=asyncio.get_event_loop()
     )
 
     # print('Send: %r' % message)
